@@ -1,7 +1,6 @@
 import postgres from 'postgres';
 import { db, queryClient } from '../src/db/index.js';
-
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/360events_dev';
+import { databaseUrl } from '../src/config/database-url.js';
 
 /**
  * Truncates all tables in the public schema to ensure isolation between tests.
@@ -28,7 +27,7 @@ export const openConcurrencyConnections = (count: number): postgres.Sql[] => {
   const connections: postgres.Sql[] = [];
   for (let i = 0; i < count; i++) {
     // max: 1 ensures each instance uses a distinct connection, bypassing the pool
-    connections.push(postgres(connectionString, { max: 1 }));
+    connections.push(postgres(databaseUrl, { max: 1 }));
   }
   return connections;
 };

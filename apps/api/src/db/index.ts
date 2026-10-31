@@ -1,10 +1,9 @@
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
-
-const connectionString = process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/360events_dev';
+import { databaseUrl } from '../config/database-url.js';
 
 // Application pool restricts max connections
-export const queryClient = postgres(connectionString, { 
+export const queryClient = postgres(databaseUrl, {
   max: 20, 
   idle_timeout: 30,
   connect_timeout: 10

@@ -1,11 +1,12 @@
 import { defineConfig } from 'drizzle-kit';
+import { databaseUrl } from './src/config/database-url.js';
 
 export default defineConfig({
   schema: './src/db/schema.ts',
   out: './src/db/migrations',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/360events_dev',
+    url: databaseUrl,
   },
   verbose: true,
   strict: true,
