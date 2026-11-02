@@ -1,4 +1,5 @@
 {
+  "$schema": "../../tsconfig.schema.json",
   "extends": "../../packages/config/tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",

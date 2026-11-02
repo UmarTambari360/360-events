@@ -1,4 +1,5 @@
 {
+  "$schema": "../../tsconfig.schema.json",
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "rootDir": ".",
