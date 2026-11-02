@@ -8,32 +8,48 @@ const server = app.listen(env.PORT, () => {
   logger.info(`Server is running on port ${env.PORT} in ${env.NODE_ENV} mode`);
 });
 
+const closeHttpServer = (): Promise<void> => new Promise((resolve, reject) => {
+  server.close((err) => {
+    if (err) {
+      reject(err);
+      return;
+    }
+
+    resolve();
+  });
+});
+
 const gracefulShutdown = async (signal: string): Promise<void> => {
   logger.info({ signal }, 'Received shutdown signal, starting graceful shutdown');
-  
-  server.close(async (err) => {
-    if (err) {
-      logger.error({ err }, 'Error during server closure');
-      process.exit(1);
-    }
-    
-    logger.info('HTTP server closed, closing database connections');
-    try {
-      await closeDatabase();
-      logger.info('Database connections closed cleanly');
-      process.exit(0);
-    } catch (dbErr) {
-      logger.error({ err: dbErr }, 'Error closing database connections');
-      process.exit(1);
-    }
-  });
 
-  // Force shutdown if graceful shutdown takes too long
-  setTimeout(() => {
+  // Force shutdown if graceful shutdown takes too long.
+  const shutdownTimeout = setTimeout(() => {
     logger.fatal('Could not close connections in time, forcefully shutting down');
     process.exit(1);
-  }, 10000).unref();
+  }, 10000);
+  shutdownTimeout.unref();
+
+  try {
+    await closeHttpServer();
+    logger.info('HTTP server closed, closing database connections');
+
+    await closeDatabase();
+    logger.info('Database connections closed cleanly');
+    process.exit(0);
+  } catch (err) {
+    logger.error({ err }, 'Error during graceful shutdown');
+    process.exit(1);
+  } finally {
+    clearTimeout(shutdownTimeout);
+  }
 };
 
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+const handleShutdownSignal = (signal: string): void => {
+  gracefulShutdown(signal).catch((err: unknown) => {
+    logger.error({ err }, 'Unexpected error during graceful shutdown');
+    process.exit(1);
+  });
+};
+
+process.on('SIGTERM', () => handleShutdownSignal('SIGTERM'));
+process.on('SIGINT', () => handleShutdownSignal('SIGINT'));

@@ -17,6 +17,10 @@ describe('Concurrency Test Harness', () => {
     expect(concurrentConns).toHaveLength(2);
     
     const [conn1, conn2] = concurrentConns;
+
+    if (!conn1 || !conn2) {
+      throw new Error('Expected two independent database connections.');
+    }
     
     // Simple proof of independent execution 
     const res1 = await conn1`SELECT 1 as val`;
