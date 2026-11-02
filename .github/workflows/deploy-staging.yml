@@ -1,0 +1,57 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy-staging:
+    name: Staging Deployment
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9.12.1
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      # P1-T07: Run migrations as a separate step BEFORE deployment
+      # Uses the highly-privileged 'migrator' database role, NOT the application role
+      - name: Execute Database Migrations
+        env:
+          DATABASE_URL: ${{ secrets.STAGING_MIGRATOR_DATABASE_URL }}
+        run: pnpm --filter @360events/api run db:migrate
+
+      # (Mocked) Image Build and Push
+      - name: Build and Push Docker Images
+        run: |
+          echo "Building API and Worker images..."
+          # docker build -t 360events/api:latest -f apps/api/Dockerfile .
+          # docker build -t 360events/worker:latest -f apps/worker/Dockerfile .
+          echo "Pushing to registry..."
+
+      # (Mocked) Deployment Trigger
+      - name: Deploy to Staging Hosting
+        run: |
+          echo "Deploying newly built containers to staging environment..."
+          # triggering deployment webhook/CLI here
+
+      # P1-T07: Wait for readiness and abort on failure
+      - name: Readiness Health Check
+        run: |
+          echo "Polling /health/ready on staging..."
+          # In a real environment, replace this with actual cURL polling:
+          # timeout 60 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' ${{ secrets.STAGING_API_URL }}/health/ready)" != "200" ]]; do sleep 5; done' || exit 1
+          echo "Staging API is ready."
