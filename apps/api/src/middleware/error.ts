@@ -12,6 +12,19 @@ export const errorHandler = (
 ): void => {
   logger.error({ err, reqId: req.id }, 'Unhandled request error');
 
+  // P2-T02: Map transition errors to HTTP 409[cite: 4]
+  if (err.name === 'InvalidTransitionError') {
+    const errorResponse: ApiErrorResponse = {
+      error: {
+        code: 'INVALID_TRANSITION',
+        message: err.message,
+        requestId: req.id as string,
+      },
+    };
+    res.status(409).json(errorResponse);
+    return;
+  }
+
   const statusCode = 500;
   const isProduction = env.NODE_ENV === 'production';
 
