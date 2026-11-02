@@ -1,4 +1,5 @@
 {
+  "$schema": "../../package.schema.json",
   "name": "@360events/validators",
   "private": true,
   "version": "0.1.0",

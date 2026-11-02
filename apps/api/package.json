@@ -1,10 +1,11 @@
 {
+  "$schema": "../../package.schema.json",
   "name": "@360events/api",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "buld": "tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
