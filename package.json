@@ -12,7 +12,7 @@
     "dev": "pnpm -r --parallel run dev",
     "build": "pnpm -r run build",
     "test": "vitest run",
-    "lint": "eslint .",
+    "lint": "pnpm --filter @360events/api run build && eslint .",
     "typecheck": "pnpm -r run typecheck",
     "verify": "pnpm run lint && pnpm run typecheck && pnpm run test"
   },

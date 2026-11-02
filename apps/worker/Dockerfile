@@ -7,6 +7,7 @@ WORKDIR /app
 
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY packages/ packages/
+COPY apps/api/ apps/api/
 COPY apps/worker/ apps/worker/
 
 RUN pnpm install --frozen-lockfile
@@ -23,6 +24,7 @@ USER node
 
 COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 COPY --from=builder --chown=node:node /app/packages ./packages
+COPY --from=builder --chown=node:node /app/apps/api ./apps/api
 COPY --from=builder --chown=node:node /app/apps/worker ./apps/worker
 
 EXPOSE 3001

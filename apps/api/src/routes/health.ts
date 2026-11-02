@@ -1,8 +1,8 @@
-import { Router, Request, Response } from 'express';
+import { Router, type Request, type Response, type Router as ExpressRouter } from 'express';
 import { queryClient } from '../db/index.js';
 import { logger } from '../lib/logger.js';
 
-export const healthRouter = Router();
+export const healthRouter: ExpressRouter = Router();
 
 // Liveness check - verifies the Express process is running
 healthRouter.get('/live', (req: Request, res: Response) => {

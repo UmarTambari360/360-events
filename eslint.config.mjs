@@ -14,6 +14,8 @@ export default tseslint.config(
             'apps/api/tests/*.ts',
             'apps/api/drizzle.config.ts',
             'apps/api/vitest.config.ts',
+            'apps/worker/tests/*.ts',
+            'apps/worker/vitest.config.ts',
             'apps/web/postcss.config.js',
             'apps/web/tailwind.config.js',
           ],
