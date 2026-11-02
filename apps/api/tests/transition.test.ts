@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { pgTable, text } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
@@ -30,6 +31,7 @@ const orderTransitions: TransitionTable<OrderStatus> = {
   confirmed: [],
   cancelled: [],
 };
+const fixtureEntityId = randomUUID();
 
 describe('State Transitions (P2-T02)', () => {
   describe('Transition Table Logic', () => {
@@ -55,7 +57,7 @@ describe('State Transitions (P2-T02)', () => {
   });
 
   describe('Database Conditional Updates & History [INV-10]', () => {
-    let concurrentConns: postgres.Sql[];
+    let concurrentConns: postgres.Sql[] = [];
 
     beforeAll(async () => {
       await queryClient.unsafe(`
@@ -67,14 +69,14 @@ describe('State Transitions (P2-T02)', () => {
 
     afterAll(async () => {
       await closeConcurrencyConnections(concurrentConns);
-      await queryClient.unsafe(`DROP TABLE IF EXISTS test_history; DROP TABLE IF EXISTS test_entities;`);
+      await queryClient`DELETE FROM test_history WHERE entity_id = ${fixtureEntityId}`;
+      await queryClient`DELETE FROM test_entities WHERE id = ${fixtureEntityId}`;
     });
 
     it('safely handles concurrent transition attempts, ensuring exactly one caller wins', async () => {
-      const entityId = 'test-concurrent-1';
-      
-      await queryClient.unsafe(`TRUNCATE test_entities, test_history CASCADE;`);
-      await queryClient.unsafe(`INSERT INTO test_entities (id, status) VALUES ('${entityId}', 'pending');`);
+      const entityId = fixtureEntityId;
+
+      await queryClient`INSERT INTO test_entities (id, status) VALUES (${entityId}, 'pending')`;
 
       const results = await Promise.all(concurrentConns.map(async (conn, index) => {
         const isolatedDb = drizzle(conn);
@@ -89,7 +91,7 @@ describe('State Transitions (P2-T02)', () => {
             historyTable: testHistory,
             // Replaced the 'any' parameter with Drizzle's strict $inferSelect generic
             buildHistoryRecord: (entity: typeof testEntities.$inferSelect) => ({
-              id: `history-${index}-${Date.now()}`,
+              id: `history-${entityId}-${index}`,
               entityId: entity.id,
               status: entity.status,
             }),
@@ -106,7 +108,7 @@ describe('State Transitions (P2-T02)', () => {
       expect(failedTransitions.length).toBe(9);
       failedTransitions.forEach(fail => expect(fail.data).toBeNull());
 
-      const historyRows = await queryClient.unsafe(`SELECT * FROM test_history WHERE entity_id = '${entityId}'`);
+      const historyRows = await queryClient`SELECT * FROM test_history WHERE entity_id = ${entityId}`;
       expect(historyRows.length).toBe(1);
       expect(historyRows[0]?.status).toBe('confirmed');
     });
