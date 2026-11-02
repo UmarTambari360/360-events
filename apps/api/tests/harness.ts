@@ -1,5 +1,5 @@
 import postgres from 'postgres';
-import { db, queryClient } from '../src/db/index.js';
+import { queryClient } from '../src/db/index.js';
 import { databaseUrl } from '../src/config/database-url.js';
 
 /**

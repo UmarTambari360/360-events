@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import type { ApiErrorResponse } from '@360events/types';
 import { env } from '../config/env.js';
 import { logger } from '../lib/logger.js';
 
@@ -14,11 +15,13 @@ export const errorHandler = (
   const statusCode = 500;
   const isProduction = env.NODE_ENV === 'production';
 
-  res.status(statusCode).json({
+  const errorResponse: ApiErrorResponse = {
     error: {
       code: 'INTERNAL_SERVER_ERROR',
       message: isProduction ? 'An unexpected internal error occurred.' : err.message,
-      requestId: req.id,
+      requestId: req.id as string,
     },
-  });
+  };
+
+  res.status(statusCode).json(errorResponse);
 };

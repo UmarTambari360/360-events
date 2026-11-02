@@ -22,6 +22,8 @@
     "vitest": "^5.0.5"
   },
   "dependencies": {
+    "@360events/types": "workspace:^",
+    "@360events/validators": "workspace:^",
     "dotenv": "^18.0.9",
     "drizzle-orm": "^0.45.4",
     "express": "^5.3.0",
