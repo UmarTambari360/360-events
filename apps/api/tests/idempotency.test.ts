@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import express from 'express';
 import request from 'supertest';
 import { db } from '../src/db/index.js';
-import { idempotencyKeys } from '../src/db/schema/idempotency.js';
-import { withIdempotency } from '../src/middleware/idempotency.js';
+import { idempotencyKeys } from '../src/db/schema/idempotency.schema.js';
+import { withIdempotency } from '../src/middleware/idempotency.middleware.js';
 import { eq } from 'drizzle-orm';
 
 interface ReservationBody {

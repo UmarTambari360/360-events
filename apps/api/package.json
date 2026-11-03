@@ -26,9 +26,9 @@
       "import": "./dist/lib/jobs.js"
     },
     "./schema": {
-      "types": "./dist/db/schema.d.ts",
-      "development": "./src/db/schema.ts",
-      "import": "./dist/db/schema.js"
+      "types": "./dist/db/schema/index.d.ts",
+      "development": "./src/db/schema/index.ts",
+      "import": "./dist/db/schema/index.js"
     },
     "./database-url": {
       "types": "./dist/config/database-url.d.ts",

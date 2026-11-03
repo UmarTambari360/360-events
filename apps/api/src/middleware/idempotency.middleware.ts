@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { eq, and } from 'drizzle-orm';
 import { uuidv7 } from 'uuidv7';
 import { db } from '../db/index.js';
-import { idempotencyKeys } from '../db/schema/idempotency.js';
+import { idempotencyKeys } from '../db/schema/idempotency.schema.js';
 import { hashPayload } from '../lib/hash.js';
 
 export function withIdempotency(scope: string) {
