@@ -1,23 +1,5 @@
 import postgres from 'postgres';
-import { queryClient } from '../src/db/index.js';
 import { databaseUrl } from '../src/config/database-url.js';
-
-/**
- * Truncates all tables in the public schema to ensure isolation between tests.
- * Safely ignores the Drizzle migrations table.
- */
-export const truncateAll = async (): Promise<void> => {
-  const tables = await queryClient`
-    SELECT tablename 
-    FROM pg_tables 
-    WHERE schemaname = 'public' AND tablename != 'drizzle_migrations';
-  `;
-
-  if (tables.length > 0) {
-    const tableNames = tables.map(t => `"public"."${t.tablename}"`).join(', ');
-    await queryClient.unsafe(`TRUNCATE TABLE ${tableNames} CASCADE;`);
-  }
-};
 
 /**
  * Opens N independent PostgreSQL connections to simulate parallel callers.

@@ -19,6 +19,8 @@ Use Node.js 22 or newer and pnpm (the package manager is pinned in `package.json
 
 Follow the existing TypeScript conventions: strict typing, ES module imports with `.js` extensions in server-side TypeScript, and descriptive camelCase names for values and functions. Use PascalCase for React components and types. Keep shared API contracts in `packages/types` and reusable validation schemas in `packages/validators`; apps should depend on shared workspace packages explicitly. ESLint is the style and type-aware lint authority. Avoid `any` and validate untrusted input at boundaries.
 
+Import workspace packages by their lowercase package names (for example, `@360events/types` or `@360events/api/db`) and use only paths declared in each package's `exports`. Add a `workspace:^` dependency to the consuming app; do not use cross-app relative paths or source-file deep imports.
+
 ## Testing
 
 Vitest is configured across `apps/*` and `packages/*`. Keep tests near their package: API tests are under `apps/api/tests`, while shared validator tests sit beside source in `packages/validators/src` (for example, `index.test.ts`). Use descriptive test names that state the behavior. No repository-wide coverage threshold is configured.

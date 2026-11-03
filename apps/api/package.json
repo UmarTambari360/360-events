@@ -1,10 +1,43 @@
 {
+  "$schema": "../../package.schema.json",
   "name": "@360events/api",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/public.d.ts",
+      "development": "./src/public.ts",
+      "import": "./dist/public.js"
+    },
+    "./db": {
+      "types": "./dist/db/index.d.ts",
+      "development": "./src/db/index.ts",
+      "import": "./dist/db/index.js"
+    },
+    "./logger": {
+      "types": "./dist/lib/logger.d.ts",
+      "development": "./src/lib/logger.ts",
+      "import": "./dist/lib/logger.js"
+    },
+    "./jobs": {
+      "types": "./dist/lib/jobs.d.ts",
+      "development": "./src/lib/jobs.ts",
+      "import": "./dist/lib/jobs.js"
+    },
+    "./schema": {
+      "types": "./dist/db/schema.d.ts",
+      "development": "./src/db/schema.ts",
+      "import": "./dist/db/schema.js"
+    },
+    "./database-url": {
+      "types": "./dist/config/database-url.d.ts",
+      "development": "./src/config/database-url.ts",
+      "import": "./dist/config/database-url.js"
+    }
+  },
   "scripts": {
-    "buld": "tsc",
+    "build": "tsc",
     "typecheck": "tsc --noEmit",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -31,6 +64,7 @@
     "pino": "^10.4.0",
     "pino-http": "^11.0.0",
     "postgres": "^4.0.0",
+    "uuidv7": "^1.2.1",
     "zod": "^4.6.7"
   }
 }

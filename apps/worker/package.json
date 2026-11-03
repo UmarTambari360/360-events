@@ -3,19 +3,31 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/public.d.ts",
+      "development": "./src/public.ts",
+      "import": "./dist/public.js"
+    }
+  },
   "scripts": {
     "dev": "node --watch src/index.ts",
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
+    "build": "pnpm --filter @360events/api run build && tsc",
+    "typecheck": "pnpm --filter @360events/api run build && tsc --noEmit",
+    "test": "vitest run",
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@360events/api": "workspace:^",
+    "drizzle-orm": "^0.45.4",
     "dotenv": "^16.4.5",
     "pino": "^9.0.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "typescript": "^5.6.0"
+    "postgres": "^4.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^5.0.5"
   }
 }

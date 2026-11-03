@@ -8,21 +8,19 @@ export default tseslint.config(
     languageOptions: {
       parserOptions: {
         projectService: {
-          // Keep tooling and test files outside their production tsconfigs,
-          // while still giving type-aware rules a small, explicit project.
           allowDefaultProject: [
             'eslint.config.mjs',
             'vitest.workspace.ts',
+            'apps/api/tests/*.ts',
             'apps/api/drizzle.config.ts',
             'apps/api/vitest.config.ts',
-            'apps/api/tests/harness.ts',
-            'apps/api/tests/harness.test.ts',
-            'apps/api/tests/setup.ts',
+            'apps/worker/tests/*.ts',
+            'apps/worker/vitest.config.ts',
             'apps/web/postcss.config.js',
             'apps/web/tailwind.config.js',
           ],
           defaultProject: 'tsconfig.eslint.json',
-          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 9,
+          maximumDefaultProjectFileMatchCount_THIS_WILL_SLOW_DOWN_LINTING: 20,
         },
         tsconfigRootDir: import.meta.dirname,
       },
@@ -33,7 +31,6 @@ export default tseslint.config(
       '@typescript-eslint/no-misused-promises': 'error'
     }
   },
-  // Add boundary rules for packages
   {
     files: ['packages/**/*.ts'],
     rules: {
@@ -49,6 +46,23 @@ export default tseslint.config(
           }
         ]
       }]
+    }
+  },
+  // P2-T01: Financial module restrictions
+  {
+    files: ['apps/api/src/lib/money.ts', 'apps/api/src/**/*.finance.ts'],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "CallExpression[callee.object.name='Math'][callee.property.name=/^(round|floor|ceil)$/]",
+          message: 'Math.round, floor, and ceil are forbidden in financial modules. Use explicit bigint arithmetic.'
+        },
+        {
+          selector: "CallExpression[callee.name='parseFloat']",
+          message: 'Floating-point parsing is strictly prohibited for financial operations.'
+        }
+      ]
     }
   },
   {
